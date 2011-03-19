@@ -2,13 +2,13 @@
 #define LEXER_H
 
 #include <string>
-#include <unordered_map>
+#include <map>
 #include "defines.h"
 #include "Token.h"
 
 class Lexer {
 	private:
-		typedef std::unordered_map<std::string, short> wordTable;
+		typedef std::map<std::string, short> wordTable;
 		wordTable keywords;
 		FILE *fp;
 		unsigned char peek;

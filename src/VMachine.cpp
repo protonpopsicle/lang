@@ -10,7 +10,7 @@ struct Op {
 
 int main(int argc, char *argv[]) {
 	if (argv[1] == 0) {
-		fprintf(stderr, "missing argument 1: filename");
+		fprintf(stderr, "missing argument 1: filename\n");
 		return(0);
 	}
 	
@@ -20,7 +20,7 @@ int main(int argc, char *argv[]) {
 	char *file = argv[1];
 	FILE *fp = fopen(file, "r");
 	if (fp == 0) {
-		fprintf(stderr, "error opening file");
+		fprintf(stderr, "error opening file\n");
 		return(0);
 	}
 	
@@ -56,6 +56,7 @@ int main(int argc, char *argv[]) {
 	/*
 	* Print debug information
 	*/
+	/*	
 	printf("\nBools...\n");
 	for (int i = 0; i < boolCount; i++) {
 		printf("%i: %i\n", i, bools[i]);
@@ -161,7 +162,7 @@ int main(int argc, char *argv[]) {
 		printf("%i: %s %i\n", i, opcode.c_str(), ops[i].operand);
 	}
 	printf("\n");
-	
+	*/	
 	/*
 	* Run program
 	*/

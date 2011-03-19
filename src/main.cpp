@@ -6,7 +6,7 @@
 
 int main(int argc, char *argv[]) {
 	if (argv[1] == 0) {
-		fprintf(stderr, "missing argument 1: filename");
+		fprintf(stderr, "missing argument 1: filename\n");
 		return(0);
 	}
 	
@@ -16,7 +16,7 @@ int main(int argc, char *argv[]) {
 	char *source = argv[1];
 	FILE *fp = fopen(source, "r");
 	if (fp == 0) {
-		fprintf(stderr, "error opening file");
+		fprintf(stderr, "error opening file\n");
 		return(0);
 	}
 	

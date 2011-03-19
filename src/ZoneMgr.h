@@ -1,7 +1,7 @@
 #ifndef ZONEMGR_H
 #define ZONEMGR_H
 
-#include <unordered_map>
+#include <map>
 #include <vector>
 #include "defines.h"
 #include "Error.h"
@@ -12,7 +12,7 @@ class ZoneMgr {
 			char type;
 			int index;
 		};
-		typedef std::unordered_map<std::string, VarData> varTable;
+		typedef std::map<std::string, VarData> varTable;
 		
 		int inUse, saved;
 		std::vector<varTable> zones;

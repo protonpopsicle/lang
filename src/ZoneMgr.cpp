@@ -29,15 +29,18 @@ void ZoneMgr::addVar(std::string id, std::string type) {
 	
 	if (iter == zones[inUse].end()) {
 		if (type == "bool") {
-			varData = { BOOL, boolCount };
+			varData.type = BOOL;
+			varData.index = boolCount;
 			boolCount++;
 		}
 		else if (type == "int") {
-			varData = { INT, intCount };
+			varData.type = INT;
+			varData.index = intCount;
 			intCount++;
 		}
 		else if (type == "string") {
-			varData = { STRING, stringCount };
+			varData.type = STRING;
+			varData.index = stringCount;
 			stringCount++;
 		}
 		zones[inUse].insert(std::make_pair(id, varData));
