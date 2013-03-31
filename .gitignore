@@ -1,2 +1,3 @@
-comp
-vm
+*.o
+*.lang
+bin/

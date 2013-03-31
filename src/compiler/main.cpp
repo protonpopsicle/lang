@@ -46,7 +46,7 @@ int main(int argc, char *argv[]) {
 	if (pos != -1) {
 		fname = fname.substr(0, pos);
 	}
-	fname += ".x";
+	fname += ".lang";
 	
 	fp = fopen(fname.c_str(), "w");
 	byteCoder->write(fp);

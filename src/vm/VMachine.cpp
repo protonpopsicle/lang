@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string>
+#include <vector>
 #include "defines.h"
 #include "Stack.h"
 
@@ -35,7 +36,7 @@ int main(int argc, char *argv[]) {
 	
 	char bools[boolCount];
 	int ints[intCount];
-	std::string strings[strCount];
+	std::vector<std::string> strings(strCount);
 	Op ops[opCount];
 	
 	char c;

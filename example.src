@@ -3,6 +3,7 @@
 	int y = 22
 
 	while x < y {
+		print "hey"
 		print x
 		x = x + 1
 	}
