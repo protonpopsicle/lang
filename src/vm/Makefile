@@ -2,7 +2,7 @@ SRCS := $(wildcard *.cpp)
 OBJS := ${SRCS:.cpp=.o}
 INCLUDE_DIRS := ../
 BIN_DIR := ../../bin/
-NAME := $(BIN_DIR)vm
+NAME := $(BIN_DIR)run
 
 CPPFLAGS += $(foreach includedir,$(INCLUDE_DIRS),-I$(includedir))
 
