@@ -2,43 +2,43 @@
 
 Parser::Parser(Lexer *l, ZoneMgr *z, ByteCoder *b) 
 {
-	lexer = l;
-	zoneMgr = z;
-	byteCoder =	b;
-	
-	move();
+    lexer = l;
+    zoneMgr = z;
+    byteCoder = b;
+    
+    move();
 }
 
 void Parser::move() {
-	look = lexer->scan();
+    look = lexer->scan();
 }
 
 void Parser::match(short tag) {
-	if (look.tag == tag) {
-		move();
-	}
-	else {
-		throw Error(tag, look.tag);
-	}
+    if (look.tag == tag) {
+        move();
+    }
+    else {
+        throw Error(tag, look.tag);
+    }
 }
 
 //=================
 // program -> block
 //=================
 void Parser::program() {
-	block();
+    block();
 }
 
 //===================
 // block -> { stmts }
 //===================
 void Parser::block() {
-	match('{');
-	zoneMgr->saveZone();
-	zoneMgr->createZone();
-	stmts();
-	match('}');
-	zoneMgr->loadZone();
+    match('{');
+    zoneMgr->saveZone();
+    zoneMgr->createZone();
+    stmts();
+    match('}');
+    zoneMgr->loadZone();
 }
 
 //===================================
@@ -48,88 +48,88 @@ void Parser::block() {
 // restDecl -> = bool | e
 //===================================
 void Parser::decl() {
-	// decl -> basic id
-	std::string type = look.lexeme;
-	move();
-	std::string id = look.lexeme;
-	match(ID);
-	zoneMgr->addVar(id, type);
-	// restDecl -> = bool
-	if (look.tag == '=') {
-		match('=');
-		char rhs = boolean();
-		byteCoder->assignVar(id, rhs);
-	}
-	// restDecl -> e
+    // decl -> basic id
+    std::string type = look.lexeme;
+    move();
+    std::string id = look.lexeme;
+    match(ID);
+    zoneMgr->addVar(id, type);
+    // restDecl -> = bool
+    if (look.tag == '=') {
+        match('=');
+        char rhs = boolean();
+        byteCoder->assignVar(id, rhs);
+    }
+    // restDecl -> e
 }
 
 //==============================================
 // stmts -> stmt stmts | e
 // stmt -> block | decl | id = bool | print bool
-//		 | if bool block
+//       | if bool block
 //       | while bool block 
-//	 	 | do block while bool
+//       | do block while bool
 //==============================================
 void Parser::stmts() {
-	char lhs, rhs;
-	std::string id;
-	
-	while (look.tag == '{' || look.tag == ID || look.tag == BASIC || look.tag == PRINT || 
-		   look.tag == IF || look.tag == WHILE || look.tag == DO) {
-		switch (look.tag) {
-			// stmt -> block
-			case '{':
-				block();
-				break;
-			// stmt -> decl
-			case BASIC:
-				decl();
-				break;
-			// stmt -> id = bool
-			case ID:
-				id = look.lexeme;
-				move(); 
-				match('=');
-				rhs = boolean();
-				byteCoder->assignVar(id, rhs);
-				break;
-			// stmt -> print bool
-			case PRINT:
-				move(); 
-				rhs = boolean();
-				byteCoder->print(rhs);
-				break;
-			// stmt -> if bool block
-			case IF:
-				move(); 
-				boolean();
-				byteCoder->jump();
-				block();
-				byteCoder->land();
-				break;
-			// stmt -> while bool block
-			case WHILE:
-				move();
-				byteCoder->startLoop();
-				boolean();
-				byteCoder->jump();
-				block();
-				byteCoder->endLoop();
-				byteCoder->land();
-				break;
-			// stmt -> do block while bool
-			case DO:
-				move();
-				byteCoder->startLoop();
-				block();
-				match(WHILE);
-				boolean();
-				byteCoder->jump();
-				byteCoder->endLoop();
-				byteCoder->land();
-				break;
-		}
-	}
+    char lhs, rhs;
+    std::string id;
+    
+    while (look.tag == '{' || look.tag == ID || look.tag == BASIC || look.tag == PRINT || 
+           look.tag == IF || look.tag == WHILE || look.tag == DO) {
+        switch (look.tag) {
+            // stmt -> block
+            case '{':
+                block();
+                break;
+            // stmt -> decl
+            case BASIC:
+                decl();
+                break;
+            // stmt -> id = bool
+            case ID:
+                id = look.lexeme;
+                move(); 
+                match('=');
+                rhs = boolean();
+                byteCoder->assignVar(id, rhs);
+                break;
+            // stmt -> print bool
+            case PRINT:
+                move(); 
+                rhs = boolean();
+                byteCoder->print(rhs);
+                break;
+            // stmt -> if bool block
+            case IF:
+                move(); 
+                boolean();
+                byteCoder->jump();
+                block();
+                byteCoder->land();
+                break;
+            // stmt -> while bool block
+            case WHILE:
+                move();
+                byteCoder->startLoop();
+                boolean();
+                byteCoder->jump();
+                block();
+                byteCoder->endLoop();
+                byteCoder->land();
+                break;
+            // stmt -> do block while bool
+            case DO:
+                move();
+                byteCoder->startLoop();
+                block();
+                match(WHILE);
+                boolean();
+                byteCoder->jump();
+                byteCoder->endLoop();
+                byteCoder->land();
+                break;
+        }
+    }
 }
 
 //=================================
@@ -139,17 +139,17 @@ void Parser::stmts() {
 // restBool -> || join restBool | e
 //=================================
 char Parser::boolean() {
-	char lhs, rhs;
-	lhs = join(); // bool -> join restBool
-	
-	// restBool -> || join restBool
-	while (look.tag == OR) {
-		move();
-		rhs = join();
-		lhs = byteCoder->evalBool(OR, lhs, rhs);
-	}
-	// restBool -> e
-	return lhs;
+    char lhs, rhs;
+    lhs = join(); // bool -> join restBool
+    
+    // restBool -> || join restBool
+    while (look.tag == OR) {
+        move();
+        rhs = join();
+        lhs = byteCoder->evalBool(OR, lhs, rhs);
+    }
+    // restBool -> e
+    return lhs;
 }
 
 //=====================================
@@ -159,17 +159,17 @@ char Parser::boolean() {
 // restJoin -> && equality restJoin | e
 //=====================================
 char Parser::join() {
-	char lhs, rhs;
-	lhs = equality(); // join -> equality restJoin
-	
-	// restJoin -> && equality restJoin
-	while (look.tag == AND) {
-		move();
-		rhs = equality();
-		lhs = byteCoder->evalBool(AND, lhs, rhs);
-	}
-	// restJoin -> e
-	return lhs;
+    char lhs, rhs;
+    lhs = equality(); // join -> equality restJoin
+    
+    // restJoin -> && equality restJoin
+    while (look.tag == AND) {
+        move();
+        rhs = equality();
+        lhs = byteCoder->evalBool(AND, lhs, rhs);
+    }
+    // restJoin -> e
+    return lhs;
 }
 
 //==============================================================
@@ -179,19 +179,19 @@ char Parser::join() {
 // restEquality -> == rel restEquality | != rel restEquality | e
 //==============================================================
 char Parser::equality() {
-	short oper;
-	char lhs, rhs;
-	lhs = rel(); // equality -> rel restEquality
-	
-	// restEquality -> == rel restEquality | != rel restEquality
-	while (look.tag == EQ || look.tag == NE) {
-		oper = look.tag;
-		move();
-		rhs = rel();
-		lhs = byteCoder->evalBool(oper, lhs, rhs);
-	}
-	// restEquality -> e
-	return lhs;
+    short oper;
+    char lhs, rhs;
+    lhs = rel(); // equality -> rel restEquality
+    
+    // restEquality -> == rel restEquality | != rel restEquality
+    while (look.tag == EQ || look.tag == NE) {
+        oper = look.tag;
+        move();
+        rhs = rel();
+        lhs = byteCoder->evalBool(oper, lhs, rhs);
+    }
+    // restEquality -> e
+    return lhs;
 }
 
 //===================================================================================
@@ -201,19 +201,19 @@ char Parser::equality() {
 // restRel -> < expr restRel | > expr restRel | <= expr restRel | >= expr restRel | e
 //===================================================================================
 char Parser::rel() {
-	short oper;
-	char lhs, rhs;
-	lhs = expr(); // rel -> expr restRel
-	
-	// restRel -> < expr restRel | > expr restRel | <= expr restRel | >= expr restRel
-	while (look.tag == '<' || look.tag == '>' || look.tag == LE || look.tag == GE) {
-		oper = look.tag;
-		move();
-		rhs = expr();
-		lhs = byteCoder->evalBool(oper, lhs, rhs);
-	}
-	// restRel -> e
-	return lhs;
+    short oper;
+    char lhs, rhs;
+    lhs = expr(); // rel -> expr restRel
+    
+    // restRel -> < expr restRel | > expr restRel | <= expr restRel | >= expr restRel
+    while (look.tag == '<' || look.tag == '>' || look.tag == LE || look.tag == GE) {
+        oper = look.tag;
+        move();
+        rhs = expr();
+        lhs = byteCoder->evalBool(oper, lhs, rhs);
+    }
+    // restRel -> e
+    return lhs;
 }
 
 //==================================================
@@ -223,18 +223,18 @@ char Parser::rel() {
 // restExpr -> + term restExpr | - term restExpr | e
 //==================================================
 char Parser::expr() {
-	char oper, lhs, rhs;
-	lhs = term(); // expr -> term restExpr
-	
-	// restExpr -> + term restExpr | - term restExpr
-	while (look.tag == '+' || look.tag == '-') {
-		oper = look.tag;
-		move(); 
-		rhs = term();
-		lhs = byteCoder->evalArith(oper, lhs, rhs);
-	}
-	// restExpr -> e
-	return lhs;
+    char oper, lhs, rhs;
+    lhs = term(); // expr -> term restExpr
+    
+    // restExpr -> + term restExpr | - term restExpr
+    while (look.tag == '+' || look.tag == '-') {
+        oper = look.tag;
+        move(); 
+        rhs = term();
+        lhs = byteCoder->evalArith(oper, lhs, rhs);
+    }
+    // restExpr -> e
+    return lhs;
 }
 
 //====================================================
@@ -244,67 +244,67 @@ char Parser::expr() {
 // restTerm -> * unary restTerm | / unary restTerm | e
 //====================================================
 char Parser::term() {
-	char oper, lhs, rhs;
-	lhs = unary(); // term -> unary restTerm
-	
-	// restTerm -> * unary restTerm | / unary restTerm
-	while (look.tag == '*' || look.tag == '/') {
-		oper = look.tag;
-		move(); 
-		rhs = unary();
-		lhs = byteCoder->evalArith(oper, lhs, rhs);
-	}
-	// restTerm -> e
-	return lhs;
+    char oper, lhs, rhs;
+    lhs = unary(); // term -> unary restTerm
+    
+    // restTerm -> * unary restTerm | / unary restTerm
+    while (look.tag == '*' || look.tag == '/') {
+        oper = look.tag;
+        move(); 
+        rhs = unary();
+        lhs = byteCoder->evalArith(oper, lhs, rhs);
+    }
+    // restTerm -> e
+    return lhs;
 }
 
 //==========================
 // unary -> - unary | factor
 //==========================
 char Parser::unary() {
-	char rhs;
-	
-	// unary -> - unary
-	if (look.tag == '-') {
-		move(); 
-		rhs = unary();
-		return byteCoder->evalUnary(rhs);
-	}
-	// unary -> factor
-	return factor();
+    char rhs;
+    
+    // unary -> - unary
+    if (look.tag == '-') {
+        move(); 
+        rhs = unary();
+        return byteCoder->evalUnary(rhs);
+    }
+    // unary -> factor
+    return factor();
 }
 
 //===========================================
 // factor -> true | false | int | string | id
 //===========================================
 char Parser::factor() {
-	int x;
-	std::string s;
-	
-	switch (look.tag) {
-		// factor -> true
-		case TRUE:
-			move();
-			return byteCoder->makeBool(1);
-		// factor -> false
-		case FALSE:
-			move();
-			return byteCoder->makeBool(0);
-		// factor -> int
-		case NUM:
-			x = look.val;
-			move();
-			return byteCoder->makeInt(x);
-		// factor -> string
-		case QUOTE:
-			s = look.lexeme;
-			move();
-			return byteCoder->makeString(s);
-		// factor -> id
-		case ID:
-			s = look.lexeme;
-			move();
-			return byteCoder->getVar(s);
-	}
-	throw Error("expected datatype");
+    int x;
+    std::string s;
+    
+    switch (look.tag) {
+        // factor -> true
+        case TRUE:
+            move();
+            return byteCoder->makeBool(1);
+        // factor -> false
+        case FALSE:
+            move();
+            return byteCoder->makeBool(0);
+        // factor -> int
+        case NUM:
+            x = look.val;
+            move();
+            return byteCoder->makeInt(x);
+        // factor -> string
+        case QUOTE:
+            s = look.lexeme;
+            move();
+            return byteCoder->makeString(s);
+        // factor -> id
+        case ID:
+            s = look.lexeme;
+            move();
+            return byteCoder->getVar(s);
+    }
+    throw Error("expected datatype");
 }

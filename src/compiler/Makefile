@@ -11,9 +11,9 @@ CPPFLAGS += $(foreach includedir,$(INCLUDE_DIRS),-I$(includedir))
 all: $(NAME)
 
 $(NAME): $(OBJS)
-	mkdir -p $(BIN_DIR)
-	$(LINK.cc) $(OBJS) -o $(NAME)
+    mkdir -p $(BIN_DIR)
+    $(LINK.cc) $(OBJS) -o $(NAME)
 
 clean:
-	@- $(RM) $(NAME)
-	@- $(RM) $(OBJS)
+    @- $(RM) $(NAME)
+    @- $(RM) $(OBJS)
